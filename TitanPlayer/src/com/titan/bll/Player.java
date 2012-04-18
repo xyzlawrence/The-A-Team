@@ -85,12 +85,20 @@ public class Player extends PlaybackListener implements Runnable{
         try {
             this.playerThread.wait();
             this.isPaused = true;
-        } catch (InterruptedException ex) {
+        }catch (InterruptedException ex) {
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
         }      
-                
-
+    }
+        public void stopSong(){
+        synchronized (this.playerThread){
+        try {
+            this.playerThread.wait();
+            this.playerThread = null;
+        }catch (InterruptedException ex) {
+            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }      
     }
     
     public boolean isPaused(){

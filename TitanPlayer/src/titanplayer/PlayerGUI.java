@@ -3,44 +3,39 @@
  * and open the template in the editor.
  */
 package titanplayer;
+
 import com.titan.bll.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.jcp.xml.dsig.internal.dom.Utils;
 
 /**
  *
  * @author Brandon
  */
 public class PlayerGUI extends javax.swing.JFrame {
-    private File file;
+
+    protected File file;
     Library myLibray = new Library();
     List playlistCollection = new ArrayList();
-    
+    private boolean granted = false;
 
     public PlayerGUI() {
+    
         
         
+      //  if(granted){
         initComponents();
-        loginFrame.setVisible(rootPaneCheckingEnabled);
-        
-        User user = new User();
-        user.setUsername(usernameText.getText());
-        
-        if(user.getUsername().equalsIgnoreCase("TEST")){
-            loginFrame.setVisible(false);
-        }else{
-           // System.exit(0);
-        }
-        
-        System.out.print(user.getUsername());
-        //if(verified){
-       // }else{
-       //     System.exit(0);
-       // }
-                
+        loginFrame.setVisible(true);
+     //   }else{
+     //       System.exit(0);
+     //   }
     }
 
     /**
@@ -52,17 +47,26 @@ public class PlayerGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSongChooser = new javax.swing.JFileChooser();
         loginFrame = new javax.swing.JFrame();
         usernameText = new javax.swing.JTextField();
         loginCancelBtn = new javax.swing.JButton();
         loginLoginBtn = new javax.swing.JButton();
-        emailText = new javax.swing.JTextField();
         passwordTextField = new javax.swing.JPasswordField();
         passwordLabel = new javax.swing.JLabel();
-        emailLabel = new javax.swing.JLabel();
         usernameLabel = new javax.swing.JLabel();
         passwordWindowTitle = new javax.swing.JLabel();
+        newAccountBtn = new javax.swing.JButton();
+        newAccount = new javax.swing.JFrame();
+        newAccountUsernameLabel = new javax.swing.JLabel();
+        newAccountUsernameTextField = new javax.swing.JTextField();
+        newAccountEmailLabel = new javax.swing.JLabel();
+        newAccountEmailTextField = new javax.swing.JTextField();
+        newAccountPasswordLabel = new javax.swing.JLabel();
+        newAccountPasswordField = new javax.swing.JTextField();
+        newAccountPasswordRetypeLabel = new javax.swing.JLabel();
+        newAccountPasswordFieldRetype = new javax.swing.JTextField();
+        newAccountSubmitBtn = new javax.swing.JButton();
+        newAccountCancelBtn = new javax.swing.JButton();
         jPanelMain = new javax.swing.JPanel();
         jPanelControls = new javax.swing.JPanel();
         jButtonStop = new javax.swing.JButton();
@@ -89,12 +93,11 @@ public class PlayerGUI extends javax.swing.JFrame {
         jMenuPlayListDeleteSong = new javax.swing.JMenuItem();
 
         loginFrame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        loginFrame.setTitle("TitanPlayer");
         loginFrame.setAlwaysOnTop(true);
-        loginFrame.setAutoRequestFocus(false);
-        loginFrame.setBounds(new java.awt.Rectangle(0, 0, 250, 300));
+        loginFrame.setBounds(new java.awt.Rectangle(0, 0, 400, 225));
         loginFrame.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        loginFrame.setPreferredSize(new java.awt.Dimension(500, 500));
-        loginFrame.setResizable(false);
+        loginFrame.setPreferredSize(new java.awt.Dimension(500, 250));
 
         loginCancelBtn.setText("Cancel");
         loginCancelBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -104,15 +107,25 @@ public class PlayerGUI extends javax.swing.JFrame {
         });
 
         loginLoginBtn.setText("Login");
+        loginLoginBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginLoginBtnActionPerformed(evt);
+            }
+        });
 
         passwordLabel.setText("Password:");
-
-        emailLabel.setText("E-mail:");
 
         usernameLabel.setText("Username:");
 
         passwordWindowTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         passwordWindowTitle.setText("TitanPlayer Music Player Login");
+
+        newAccountBtn.setText("New Account");
+        newAccountBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newAccountBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout loginFrameLayout = new javax.swing.GroupLayout(loginFrame.getContentPane());
         loginFrame.getContentPane().setLayout(loginFrameLayout);
@@ -121,47 +134,117 @@ public class PlayerGUI extends javax.swing.JFrame {
             .addGroup(loginFrameLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(loginFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(loginFrameLayout.createSequentialGroup()
-                        .addComponent(loginCancelBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(loginLoginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(passwordTextField)
-                    .addComponent(emailText)
-                    .addComponent(passwordWindowTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                    .addComponent(passwordWindowTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(usernameText)
                     .addGroup(loginFrameLayout.createSequentialGroup()
                         .addGroup(loginFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(passwordLabel)
-                            .addComponent(emailLabel)
-                            .addComponent(usernameLabel))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(usernameLabel)
+                            .addComponent(passwordLabel))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(loginFrameLayout.createSequentialGroup()
+                        .addComponent(newAccountBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 234, Short.MAX_VALUE)
+                        .addComponent(loginCancelBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(loginLoginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         loginFrameLayout.setVerticalGroup(
             loginFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(loginFrameLayout.createSequentialGroup()
-                .addContainerGap(16, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(passwordWindowTitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(usernameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(usernameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(emailLabel)
-                .addGap(5, 5, 5)
-                .addComponent(emailText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(passwordLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(passwordTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(loginFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(loginCancelBtn)
-                    .addComponent(loginLoginBtn))
+                    .addComponent(newAccountBtn)
+                    .addComponent(loginLoginBtn)
+                    .addComponent(loginCancelBtn))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        newAccount.setTitle("TitanPlayer New Account");
+        newAccount.setAlwaysOnTop(true);
+        newAccount.setBounds(new java.awt.Rectangle(0, 0, 500, 300));
+        newAccount.setResizable(false);
+
+        newAccountUsernameLabel.setText("Username:");
+
+        newAccountEmailLabel.setText("E-mail:");
+
+        newAccountPasswordLabel.setText("Password:");
+
+        newAccountPasswordRetypeLabel.setText("Password (Re-type):");
+
+        newAccountSubmitBtn.setText("Submit");
+
+        newAccountCancelBtn.setText("Cancel");
+        newAccountCancelBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newAccountCancelBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout newAccountLayout = new javax.swing.GroupLayout(newAccount.getContentPane());
+        newAccount.getContentPane().setLayout(newAccountLayout);
+        newAccountLayout.setHorizontalGroup(
+            newAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(newAccountLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(newAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(newAccountUsernameTextField)
+                    .addComponent(newAccountEmailTextField)
+                    .addComponent(newAccountPasswordField)
+                    .addGroup(newAccountLayout.createSequentialGroup()
+                        .addGroup(newAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(newAccountUsernameLabel)
+                            .addComponent(newAccountEmailLabel)
+                            .addComponent(newAccountPasswordLabel)
+                            .addComponent(newAccountPasswordRetypeLabel))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(newAccountPasswordFieldRetype)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, newAccountLayout.createSequentialGroup()
+                        .addComponent(newAccountCancelBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 250, Short.MAX_VALUE)
+                        .addComponent(newAccountSubmitBtn)))
                 .addContainerGap())
+        );
+        newAccountLayout.setVerticalGroup(
+            newAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(newAccountLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(newAccountUsernameLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newAccountUsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newAccountEmailLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newAccountEmailTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newAccountPasswordLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newAccountPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newAccountPasswordRetypeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newAccountPasswordFieldRetype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(newAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(newAccountSubmitBtn)
+                    .addComponent(newAccountCancelBtn))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("TitanPlayer");
         setResizable(false);
 
         jButtonStop.setText("Stop");
@@ -375,7 +458,6 @@ public class PlayerGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
     private void jButtonPlayPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlayPauseActionPerformed
         Playlist myPlaylist = new Playlist(JOptionPane.showInputDialog("Playlist name?"));
         myPlaylist.addSong(new Song("Rock Star", "John Smith", "/Test.mp3"));
@@ -389,22 +471,24 @@ public class PlayerGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonStopActionPerformed
 
     private void jMenuLoadSongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuLoadSongActionPerformed
-                JFileChooser songChooser = new JFileChooser(); 
-                songChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                int result = songChooser.showOpenDialog(this); 
+        JFileChooser songChooser = new JFileChooser();
+        songChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        FileFilter filter = new FileNameExtensionFilter("MP3 Files", "mp3");
+        songChooser.setAcceptAllFileFilterUsed(false);
+        songChooser.setFileFilter(filter);
+        int result = songChooser.showOpenDialog(this);
 
-        if (result != JFileChooser.CANCEL_OPTION) 
-            file = songChooser.getSelectedFile(); 
-        else 
-            file = null; 
+        if (result != JFileChooser.CANCEL_OPTION) {
+            file = songChooser.getSelectedFile();
+        } else {
+            file = null;
+        }
     }//GEN-LAST:event_jMenuLoadSongActionPerformed
-
     private void jMenuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuExitActionPerformed
         System.exit(0);
     }//GEN-LAST:event_jMenuExitActionPerformed
 
     private void jMenuDeleteSongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuDeleteSongActionPerformed
-        
     }//GEN-LAST:event_jMenuDeleteSongActionPerformed
 
     private void jMenuPlaylistCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuPlaylistCreateActionPerformed
@@ -416,9 +500,34 @@ public class PlayerGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuPlaylistCreateActionPerformed
 
     private void loginCancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginCancelBtnActionPerformed
-            System.exit(0);
+        System.exit(0);
     }//GEN-LAST:event_loginCancelBtnActionPerformed
 
+    private void loginLoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginLoginBtnActionPerformed
+
+        String username = usernameText.getText();
+        char[] password = passwordTextField.getPassword();
+        char[] correctPassword = {'a', 'B'};
+
+        if(username.matches("lawrence") && Arrays.equals(password, correctPassword)) {
+            this.granted = true;
+            loginFrame.setVisible(!granted);
+        }else{
+            this.granted = false;
+        }
+        
+    }//GEN-LAST:event_loginLoginBtnActionPerformed
+
+    private void newAccountCancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newAccountCancelBtnActionPerformed
+    newAccount.setVisible(false);
+    }//GEN-LAST:event_newAccountCancelBtnActionPerformed
+
+    private void newAccountBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newAccountBtnActionPerformed
+    newAccount.setVisible(true);
+    }//GEN-LAST:event_newAccountBtnActionPerformed
+
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -437,6 +546,8 @@ public class PlayerGUI extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
+
                 }
             }
         } catch (ClassNotFoundException ex) {
@@ -453,6 +564,7 @@ public class PlayerGUI extends javax.swing.JFrame {
         /*
          * Create and display the form
          */
+
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
@@ -461,8 +573,6 @@ public class PlayerGUI extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel emailLabel;
-    private javax.swing.JTextField emailText;
     private javax.swing.JButton jButtonBackward;
     private javax.swing.JButton jButtonFoward;
     private javax.swing.JButton jButtonPlayPause;
@@ -485,12 +595,23 @@ public class PlayerGUI extends javax.swing.JFrame {
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollJTree;
     private javax.swing.JScrollPane jScrollTable;
-    private javax.swing.JFileChooser jSongChooser;
     private javax.swing.JTable jTableSongInfo;
     private javax.swing.JTree jTreeTitanPlayer;
     private javax.swing.JButton loginCancelBtn;
     private javax.swing.JFrame loginFrame;
     private javax.swing.JButton loginLoginBtn;
+    private javax.swing.JFrame newAccount;
+    private javax.swing.JButton newAccountBtn;
+    private javax.swing.JButton newAccountCancelBtn;
+    private javax.swing.JLabel newAccountEmailLabel;
+    private javax.swing.JTextField newAccountEmailTextField;
+    private javax.swing.JTextField newAccountPasswordField;
+    private javax.swing.JTextField newAccountPasswordFieldRetype;
+    private javax.swing.JLabel newAccountPasswordLabel;
+    private javax.swing.JLabel newAccountPasswordRetypeLabel;
+    private javax.swing.JButton newAccountSubmitBtn;
+    private javax.swing.JLabel newAccountUsernameLabel;
+    private javax.swing.JTextField newAccountUsernameTextField;
     private javax.swing.JLabel passwordLabel;
     private javax.swing.JPasswordField passwordTextField;
     private javax.swing.JLabel passwordWindowTitle;

@@ -35,8 +35,9 @@ public class UserAccountTest {
     
     @Test
     public void userAccountCreated(){
-        User newAccount = new User("Username");
+        User newAccount = new User("Username", "HIDDSA", "Y@yahoo.com" , true);
         assertEquals(newAccount.getUsername(), "Username");
+        assertTrue(newAccount.isEnabled());
     }
     
     
