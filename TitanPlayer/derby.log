@@ -1,0 +1,13 @@
+2012-04-25 00:45:14.876 GMT : Apache Derby Network Server - 10.6.2.1 - (999685) started and ready to accept connections on port 1527
+----------------------------------------------------------------
+2012-04-25 00:45:15.181 GMT:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.6.2.1 - (999685): instance a816c00e-0136-e6f5-908e-00007976a9a4 
+on database directory C:\Users\Brandon\Documents\NetBeansProjects\TitanPlayer\TitanPlayer  with class loader sun.misc.Launcher$AppClassLoader@262505b7 
+Loaded from file:/C:/Program%20Files/glassfish-3.1.1/javadb/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_02-b13
+Database Class Loader started - derby.database.classpath=''
+
+2012-04-25 00:50:47.662 GMT:
+Shutting down instance a816c00e-0136-e6f5-908e-00007976a9a4 with class loader sun.misc.Launcher$AppClassLoader@262505b7 
+----------------------------------------------------------------

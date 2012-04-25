@@ -13,9 +13,6 @@
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
           <Color id="Default Cursor"/>
         </Property>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[500, 250]"/>
-        </Property>
       </Properties>
 
       <Layout>
@@ -130,12 +127,18 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="newAccountPasswordReType" max="32767" attributes="0"/>
                       <Component id="newAccountUsernameTextField" max="32767" attributes="0"/>
                       <Component id="newAccountEmailTextField" alignment="0" max="32767" attributes="0"/>
-                      <Component id="newAccountPasswordField" alignment="0" max="32767" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="newAccountCancelBtn" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="250" max="32767" attributes="0"/>
+                          <Component id="newAccountSubmitBtn" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="newAccountPassword" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="newAccountUsernameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -144,12 +147,6 @@
                               <Component id="newAccountPasswordRetypeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      </Group>
-                      <Component id="newAccountPasswordFieldRetype" alignment="0" max="32767" attributes="0"/>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="newAccountCancelBtn" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="250" max="32767" attributes="0"/>
-                          <Component id="newAccountSubmitBtn" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -170,11 +167,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="newAccountPasswordLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="newAccountPasswordField" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="newAccountPassword" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   <Component id="newAccountPasswordRetypeLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="newAccountPasswordFieldRetype" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                  <Component id="newAccountPasswordReType" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="newAccountSubmitBtn" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -205,19 +202,18 @@
             <Property name="text" type="java.lang.String" value="Password:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="newAccountPasswordField">
-        </Component>
         <Component class="javax.swing.JLabel" name="newAccountPasswordRetypeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Password (Re-type):"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="newAccountPasswordFieldRetype">
-        </Component>
         <Component class="javax.swing.JButton" name="newAccountSubmitBtn">
           <Properties>
             <Property name="text" type="java.lang.String" value="Submit"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newAccountSubmitBtnActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="newAccountCancelBtn">
           <Properties>
@@ -225,6 +221,13 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newAccountCancelBtnActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JPasswordField" name="newAccountPassword">
+        </Component>
+        <Component class="javax.swing.JPasswordField" name="newAccountPasswordReType">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newAccountPasswordReTypeActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -250,6 +253,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuDeleteSongActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuLogin">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Login"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuLoginActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuExit">
@@ -352,6 +363,10 @@
                           <Component id="jScrollTable" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="loginLabel" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -360,7 +375,8 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="loginLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jScrollJTree" pref="302" max="32767" attributes="0"/>
                       <Component id="jScrollTable" pref="0" max="32767" attributes="0"/>
@@ -526,6 +542,11 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JLabel" name="loginLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="User: Not Login"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>

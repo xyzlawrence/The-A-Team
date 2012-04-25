@@ -5,15 +5,20 @@
 package titanplayer;
 
 import com.titan.bll.*;
+import com.titan.dacl.DataAccess;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.jcp.xml.dsig.internal.dom.Utils;
 
 /**
  *
@@ -22,20 +27,19 @@ import org.jcp.xml.dsig.internal.dom.Utils;
 public class PlayerGUI extends javax.swing.JFrame {
 
     protected File file;
+    boolean isLogin = false;
+    User loginUser;
     Library myLibray = new Library();
     List playlistCollection = new ArrayList();
-    private boolean granted = false;
+    private Connection conn;
 
     public PlayerGUI() {
-    
-        
-        
-      //  if(granted){
-        initComponents();
-        loginFrame.setVisible(true);
-     //   }else{
-     //       System.exit(0);
-     //   }
+        try {
+            createConnection();
+            initComponents();
+        } catch (ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(PlayerGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -62,11 +66,11 @@ public class PlayerGUI extends javax.swing.JFrame {
         newAccountEmailLabel = new javax.swing.JLabel();
         newAccountEmailTextField = new javax.swing.JTextField();
         newAccountPasswordLabel = new javax.swing.JLabel();
-        newAccountPasswordField = new javax.swing.JTextField();
         newAccountPasswordRetypeLabel = new javax.swing.JLabel();
-        newAccountPasswordFieldRetype = new javax.swing.JTextField();
         newAccountSubmitBtn = new javax.swing.JButton();
         newAccountCancelBtn = new javax.swing.JButton();
+        newAccountPassword = new javax.swing.JPasswordField();
+        newAccountPasswordReType = new javax.swing.JPasswordField();
         jPanelMain = new javax.swing.JPanel();
         jPanelControls = new javax.swing.JPanel();
         jButtonStop = new javax.swing.JButton();
@@ -81,10 +85,12 @@ public class PlayerGUI extends javax.swing.JFrame {
         jTreeTitanPlayer = new javax.swing.JTree();
         jScrollTable = new javax.swing.JScrollPane();
         jTableSongInfo = new javax.swing.JTable();
+        loginLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuLoadSong = new javax.swing.JMenuItem();
         jMenuDeleteSong = new javax.swing.JMenuItem();
+        jMenuLogin = new javax.swing.JMenuItem();
         jMenuExit = new javax.swing.JMenuItem();
         jMenuPlaylist = new javax.swing.JMenu();
         jMenuPlaylistCreate = new javax.swing.JMenuItem();
@@ -97,7 +103,6 @@ public class PlayerGUI extends javax.swing.JFrame {
         loginFrame.setAlwaysOnTop(true);
         loginFrame.setBounds(new java.awt.Rectangle(0, 0, 400, 225));
         loginFrame.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        loginFrame.setPreferredSize(new java.awt.Dimension(500, 250));
 
         loginCancelBtn.setText("Cancel");
         loginCancelBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -185,11 +190,22 @@ public class PlayerGUI extends javax.swing.JFrame {
         newAccountPasswordRetypeLabel.setText("Password (Re-type):");
 
         newAccountSubmitBtn.setText("Submit");
+        newAccountSubmitBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newAccountSubmitBtnActionPerformed(evt);
+            }
+        });
 
         newAccountCancelBtn.setText("Cancel");
         newAccountCancelBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newAccountCancelBtnActionPerformed(evt);
+            }
+        });
+
+        newAccountPasswordReType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newAccountPasswordReTypeActionPerformed(evt);
             }
         });
 
@@ -200,21 +216,21 @@ public class PlayerGUI extends javax.swing.JFrame {
             .addGroup(newAccountLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(newAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(newAccountPasswordReType)
                     .addComponent(newAccountUsernameTextField)
                     .addComponent(newAccountEmailTextField)
-                    .addComponent(newAccountPasswordField)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, newAccountLayout.createSequentialGroup()
+                        .addComponent(newAccountCancelBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 250, Short.MAX_VALUE)
+                        .addComponent(newAccountSubmitBtn))
+                    .addComponent(newAccountPassword)
                     .addGroup(newAccountLayout.createSequentialGroup()
                         .addGroup(newAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(newAccountUsernameLabel)
                             .addComponent(newAccountEmailLabel)
                             .addComponent(newAccountPasswordLabel)
                             .addComponent(newAccountPasswordRetypeLabel))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(newAccountPasswordFieldRetype)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, newAccountLayout.createSequentialGroup()
-                        .addComponent(newAccountCancelBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 250, Short.MAX_VALUE)
-                        .addComponent(newAccountSubmitBtn)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         newAccountLayout.setVerticalGroup(
@@ -231,11 +247,11 @@ public class PlayerGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(newAccountPasswordLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(newAccountPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newAccountPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
                 .addComponent(newAccountPasswordRetypeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(newAccountPasswordFieldRetype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(newAccountPasswordReType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(newAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(newAccountSubmitBtn)
@@ -352,6 +368,8 @@ public class PlayerGUI extends javax.swing.JFrame {
         ));
         jScrollTable.setViewportView(jTableSongInfo);
 
+        loginLabel.setText("User: Not Login");
+
         javax.swing.GroupLayout jPanelMainLayout = new javax.swing.GroupLayout(jPanelMain);
         jPanelMain.setLayout(jPanelMainLayout);
         jPanelMainLayout.setHorizontalGroup(
@@ -371,13 +389,17 @@ public class PlayerGUI extends javax.swing.JFrame {
                         .addComponent(jScrollJTree, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelMainLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(loginLabel)))
                 .addContainerGap())
         );
         jPanelMainLayout.setVerticalGroup(
             jPanelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelMainLayout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(loginLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollJTree, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
                     .addComponent(jScrollTable, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
@@ -410,6 +432,14 @@ public class PlayerGUI extends javax.swing.JFrame {
             }
         });
         jMenuFile.add(jMenuDeleteSong);
+
+        jMenuLogin.setText("Login");
+        jMenuLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuLoginActionPerformed(evt);
+            }
+        });
+        jMenuFile.add(jMenuLogin);
 
         jMenuExit.setText("Exit");
         jMenuExit.addActionListener(new java.awt.event.ActionListener() {
@@ -471,18 +501,20 @@ public class PlayerGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonStopActionPerformed
 
     private void jMenuLoadSongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuLoadSongActionPerformed
-        JFileChooser songChooser = new JFileChooser();
-        songChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        FileFilter filter = new FileNameExtensionFilter("MP3 Files", "mp3");
-        songChooser.setAcceptAllFileFilterUsed(false);
-        songChooser.setFileFilter(filter);
-        int result = songChooser.showOpenDialog(this);
-
-        if (result != JFileChooser.CANCEL_OPTION) {
-            file = songChooser.getSelectedFile();
+        if (!isLogin) {
+            loginFrame.setVisible(true);
+            JOptionPane.showMessageDialog(null, "Please Login First");
         } else {
-            file = null;
+            try {
+                loadFile();
+                Song tempSong = new Song(JOptionPane.showInputDialog("Please Enter Song Title"), JOptionPane.showInputDialog("Please Enter Song Artist"), file.getPath());
+
+                DataAccess.save(tempSong, loginUser, conn);
+            } catch (Exception ex) {
+                Logger.getLogger(PlayerGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+
     }//GEN-LAST:event_jMenuLoadSongActionPerformed
     private void jMenuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuExitActionPerformed
         System.exit(0);
@@ -504,30 +536,90 @@ public class PlayerGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_loginCancelBtnActionPerformed
 
     private void loginLoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginLoginBtnActionPerformed
+        try {
+            String username = usernameText.getText();
+            User tempUser = DataAccess.load(username, conn);
+            char[] password = passwordTextField.getPassword();
+            boolean pwdCompare = Arrays.equals(tempUser.getPassword(), password);
 
-        String username = usernameText.getText();
-        char[] password = passwordTextField.getPassword();
-        char[] correctPassword = {'a', 'B'};
-
-        if(username.matches("lawrence") && Arrays.equals(password, correctPassword)) {
-            this.granted = true;
-            loginFrame.setVisible(!granted);
-        }else{
-            this.granted = false;
+            if (pwdCompare) {
+                this.loginUser = tempUser;
+                isLogin = true;
+                loginFrame.setVisible(false);
+                loginLabel.setText("User : " + loginUser.getUsername());
+            } else {
+                JOptionPane.showMessageDialog(null, "Password Incorrect");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(PlayerGUI.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "User doesn't exist or incorrect password");
         }
-        
     }//GEN-LAST:event_loginLoginBtnActionPerformed
 
     private void newAccountCancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newAccountCancelBtnActionPerformed
-    newAccount.setVisible(false);
+        newAccount.setVisible(false);
     }//GEN-LAST:event_newAccountCancelBtnActionPerformed
 
     private void newAccountBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newAccountBtnActionPerformed
-    newAccount.setVisible(true);
+        newAccount.setVisible(true);
     }//GEN-LAST:event_newAccountBtnActionPerformed
 
-    
-    
+    private void newAccountSubmitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newAccountSubmitBtnActionPerformed
+        boolean pwdOK;
+        String username = newAccountUsernameTextField.getText();
+        String email = newAccountEmailTextField.getText();
+        char[] password = newAccountPassword.getPassword();
+        char[] passwordReType = newAccountPasswordReType.getPassword();
+        boolean pwdCompare = Arrays.equals(password, passwordReType);
+
+        if (pwdCompare) {
+            User tempUser = new User(username, email, password);
+            try {
+                DataAccess.save(tempUser, conn);
+                newAccount.setVisible(false);
+                newAccountUsernameTextField.setText(" ");
+                newAccountEmailTextField.setText(" ");
+                newAccountPasswordReType.setText(" ");
+                newAccountPassword.setText(" ");
+                
+            } catch (Exception ex) {
+                Logger.getLogger(PlayerGUI.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "Passwords Don't Match");
+            }
+        }
+
+    }//GEN-LAST:event_newAccountSubmitBtnActionPerformed
+
+    private void newAccountPasswordReTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newAccountPasswordReTypeActionPerformed
+    }//GEN-LAST:event_newAccountPasswordReTypeActionPerformed
+
+    private void jMenuLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuLoginActionPerformed
+        loginFrame.setVisible(true);
+    }//GEN-LAST:event_jMenuLoginActionPerformed
+
+    private void createConnection() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+        String dbURL = "jdbc:derby://localhost:1527/TitanPlayer;create=true;user=Admin;password=Admin";
+        Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+        Connection conn = DriverManager.getConnection(dbURL);
+        this.conn = conn;
+    }
+
+    private void loadFile() {
+        JFileChooser songChooser = new JFileChooser();
+        songChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        FileFilter filter = new FileNameExtensionFilter("MP3 Files", "mp3");
+        songChooser.setAcceptAllFileFilterUsed(false);
+        songChooser.setFileFilter(filter);
+        int result = songChooser.showOpenDialog(this);
+
+        if (result != JFileChooser.CANCEL_OPTION) {
+            file = songChooser.getSelectedFile();
+        } else {
+            file = null;
+        }
+
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -585,6 +677,7 @@ public class PlayerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuExit;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenuItem jMenuLoadSong;
+    private javax.swing.JMenuItem jMenuLogin;
     private javax.swing.JMenuItem jMenuPlayListDeleteSong;
     private javax.swing.JMenu jMenuPlaylist;
     private javax.swing.JMenuItem jMenuPlaylistAddSong;
@@ -599,15 +692,16 @@ public class PlayerGUI extends javax.swing.JFrame {
     private javax.swing.JTree jTreeTitanPlayer;
     private javax.swing.JButton loginCancelBtn;
     private javax.swing.JFrame loginFrame;
+    private javax.swing.JLabel loginLabel;
     private javax.swing.JButton loginLoginBtn;
     private javax.swing.JFrame newAccount;
     private javax.swing.JButton newAccountBtn;
     private javax.swing.JButton newAccountCancelBtn;
     private javax.swing.JLabel newAccountEmailLabel;
     private javax.swing.JTextField newAccountEmailTextField;
-    private javax.swing.JTextField newAccountPasswordField;
-    private javax.swing.JTextField newAccountPasswordFieldRetype;
+    private javax.swing.JPasswordField newAccountPassword;
     private javax.swing.JLabel newAccountPasswordLabel;
+    private javax.swing.JPasswordField newAccountPasswordReType;
     private javax.swing.JLabel newAccountPasswordRetypeLabel;
     private javax.swing.JButton newAccountSubmitBtn;
     private javax.swing.JLabel newAccountUsernameLabel;
